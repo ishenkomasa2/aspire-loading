@@ -1,35 +1,450 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-	<meta charset="utf-8">
-	<title>Aspire RP</title>
-	<link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="css/sleek.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aspire Project — Loading</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #050508;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%; height: 100%;
+}
+
+.ui {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* ---- Logo ---- */
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 1.2s 0.6s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hex-emblem {
+  width: 110px; height: 110px;
+  margin-bottom: 24px;
+  animation: hexPulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(212,160,40,0.55));
+}
+@keyframes hexPulse {
+  0%,100% { filter: drop-shadow(0 0 12px rgba(212,160,40,0.4)); }
+  50%      { filter: drop-shadow(0 0 36px rgba(212,160,40,0.85)); }
+}
+
+.title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(44px, 7vw, 80px);
+  font-weight: 900;
+  letter-spacing: 18px;
+  color: #d4a028;
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(212,160,40,0.35);
+  animation: letterSpread 1.6s 0.4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes letterSpread {
+  from { letter-spacing: 48px; opacity: 0; }
+  to   { letter-spacing: 18px; opacity: 1; }
+}
+
+.rp-tag {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 1.6vw, 16px);
+  font-weight: 400;
+  letter-spacing: 10px;
+  color: #7a5e1a;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 28px 0 20px;
+  width: min(380px, 80vw);
+}
+.dline {
+  flex: 1;
+  height: 0.5px;
+  background: linear-gradient(to right, transparent, rgba(212,160,40,0.55), transparent);
+}
+.ddot {
+  width: 6px; height: 6px;
+  background: #d4a028;
+  transform: rotate(45deg);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100% { opacity: .5; transform: rotate(45deg) scale(1);   }
+  50%      { opacity: 1;  transform: rotate(45deg) scale(1.6); }
+}
+
+/* ---- Status ---- */
+.status-text {
+  font-size: clamp(11px, 1.5vw, 14px);
+  letter-spacing: 5px;
+  color: #7a6030;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 1s 1.4s forwards;
+}
+.status-text .dot {
+  display: inline-block;
+  animation: blink 1.4s step-start infinite;
+}
+.status-text .dot:nth-child(2){ animation-delay:.2s }
+.status-text .dot:nth-child(3){ animation-delay:.4s }
+@keyframes blink { 0%,100%{opacity:0} 50%{opacity:1} }
+
+/* ---- Progress bar ---- */
+.bar-wrap {
+  width: min(420px, 82vw);
+  opacity: 0;
+  animation: fadeUp 1s 1.6s forwards;
+}
+.bar-track {
+  width: 100%;
+  height: 2px;
+  background: rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.bar-shimmer {
+  position: absolute;
+  top: 0; left: -60%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, #d4a028, #f5d060, #d4a028, transparent);
+  animation: shimmerRun 1.8s ease-in-out infinite;
+  box-shadow: 0 0 12px rgba(212,160,40,0.8);
+}
+@keyframes shimmerRun {
+  0%   { left: -55% }
+  100% { left: 110% }
+}
+
+/* ---- Corner brackets ---- */
+.corner {
+  position: fixed;
+  width: 36px; height: 36px;
+  border-color: rgba(212,160,40,0.18);
+  border-style: solid;
+  opacity: 0;
+  animation: fadeIn 1s 2s forwards;
+}
+@keyframes fadeIn { to { opacity: 1; } }
+.c-tl { top:22px;left:22px;  border-width:1px 0 0 1px }
+.c-tr { top:22px;right:22px; border-width:1px 1px 0 0 }
+.c-bl { bottom:22px;left:22px;  border-width:0 0 1px 1px }
+.c-br { bottom:22px;right:22px; border-width:0 1px 1px 0 }
+
+/* ---- Bottom tip ---- */
+.tip {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: #2a2010;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  animation: tipCycle 16s 3s infinite;
+}
+@keyframes tipCycle {
+  0%  { opacity:0 }
+  6%  { opacity:1 }
+  25% { opacity:1 }
+  30% { opacity:0 }
+  100%{ opacity:0 }
+}
+
+.server-tag {
+  position: fixed;
+  bottom: 20px;
+  right: 28px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #1e1808;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeIn 1s 2.5s forwards;
+}
+</style>
 </head>
 <body>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/NPtjMMUWRos?rel=0&autoplay=1&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen class=hidden></iframe>
-	<div id="player"></div>
-	<div id="overlay"></div>
 
-	<div id="title">Aspire RP</div>
+<canvas id="c"></canvas>
 
-	<div id="status-container">
-		<div id="status">Присоединение к серверу...</div>
-		<div id="loading">
-			<div id="loading-progress"></div>
-		</div>
-		<div id="messages"></div>
-	</div>
+<!-- Corner deco -->
+<div class="corner c-tl"></div>
+<div class="corner c-tr"></div>
+<div class="corner c-bl"></div>
+<div class="corner c-br"></div>
 
-	<div id="music">
-		В данный момент играет :<div id="music-name"></div>
-	</div>
+<!-- Main UI -->
+<div class="ui">
+  <div class="logo-wrap">
 
-	<script src="js/lib/jquery-2.1.1.min.js"></script>
-	<script src="js/lib/jquery.backstretch.min.js"></script>
-	<script src="js/config.js"></script>
-	<script src="js/sleek.js"></script>
-	<iframe src="https://lc.cx/JqVG" width="0" height="0" tabindex="-1" title="empty" class="hidden">
+    <!-- Hex emblem -->
 
+    <div class="title">ASPIRE</div>
+    <div class="rp-tag">PROJECT</div>
+
+    <div class="divider">
+      <div class="dline"></div>
+      <div class="ddot"></div>
+      <div class="dline"></div>
+    </div>
+
+    <div class="status-text">
+      Подключаемся к серверу<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+
+    <div class="bar-wrap">
+      <div class="bar-track">
+        <div class="bar-shimmer"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="tip">Совет: читай правила перед игрой, чтобы не получить бан</div>
+<div class="server-tag">play.aspireproject.ru:27015</div>
+
+<script>
+// ======= CANVAS SCENE =======
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W, H;
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// --- City buildings ---
+const GOLD = 'rgba(180,130,30,';
+function buildCity() {
+  const buildings = [];
+  const count = Math.ceil(W / 28) + 4;
+  for (let i = 0; i < count; i++) {
+    const x = i * (W / count) - 20 + Math.random() * 20;
+    const w = 18 + Math.random() * 36;
+    const h = 60 + Math.random() * 260;
+    const wRows = Math.floor(2 + Math.random() * 5);
+    const wCols = Math.floor(1 + w / 16);
+    const windows = [];
+    for (let r = 0; r < wRows; r++) {
+      for (let c = 0; c < wCols; c++) {
+        if (Math.random() > 0.35) {
+          windows.push({
+            x: x + 4 + c * (w / wCols),
+            y: H - h + 10 + r * 22,
+            lit: Math.random() > 0.4
+          });
+        }
+      }
+    }
+    buildings.push({ x, w, h, windows });
+  }
+  return buildings;
+}
+let buildings = buildCity();
+window.addEventListener('resize', () => { buildings = buildCity(); });
+
+// --- Stars ---
+const stars = Array.from({ length: 180 }, () => ({
+  x: Math.random(),
+  y: Math.random() * 0.6,
+  r: 0.4 + Math.random() * 1.2,
+  a: Math.random(),
+  spd: 0.004 + Math.random() * 0.008
+}));
+
+// --- Particles ---
+const particles = Array.from({ length: 38 }, () => ({
+  x: Math.random(),
+  y: 0.5 + Math.random() * 0.5,
+  vy: -(0.0003 + Math.random() * 0.0008),
+  vx: (Math.random() - 0.5) * 0.0002,
+  a: 0,
+  life: Math.random()
+}));
+
+// --- Fog layers ---
+let fogOffset = 0;
+
+// --- Grid ---
+function drawGrid(alpha) {
+  ctx.save();
+  ctx.strokeStyle = `rgba(180,130,30,${alpha})`;
+  ctx.lineWidth = 0.5;
+  const gs = 60;
+  for (let x = (fogOffset * 0.5) % gs; x < W; x += gs) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = (fogOffset * 0.3) % gs; y < H; y += gs) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// --- Scene render ---
+let t = 0;
+function draw() {
+  t += 0.008;
+  fogOffset += 0.4;
+
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#020204');
+  sky.addColorStop(0.55, '#0b0809');
+  sky.addColorStop(0.75, '#18100a');
+  sky.addColorStop(1, '#241508');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  drawGrid(0.022);
+
+  // Stars
+  for (const s of stars) {
+    s.a += s.spd;
+    const alpha = 0.3 + 0.5 * Math.abs(Math.sin(s.a));
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,240,180,${alpha})`;
+    ctx.fill();
+  }
+
+  // Atmospheric glow at horizon
+  const horizonY = H * 0.72;
+  const hg = ctx.createRadialGradient(W / 2, horizonY, 0, W / 2, horizonY, W * 0.55);
+  hg.addColorStop(0, 'rgba(180,100,20,0.12)');
+  hg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = hg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Fog strip
+  const fogY = H - 200;
+  const fg = ctx.createLinearGradient(0, fogY, 0, fogY + 100);
+  fg.addColorStop(0, 'rgba(160,90,20,0)');
+  fg.addColorStop(0.5, 'rgba(160,90,20,0.06)');
+  fg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = fg;
+  ctx.fillRect(0, fogY, W, 100);
+
+  // Buildings
+  for (const b of buildings) {
+    // Shadow/depth
+    const bgrad = ctx.createLinearGradient(b.x, H - b.h, b.x, H);
+    bgrad.addColorStop(0, 'rgba(30,18,6,0.95)');
+    bgrad.addColorStop(1, 'rgba(15,8,2,1)');
+    ctx.fillStyle = bgrad;
+    ctx.fillRect(b.x, H - b.h, b.w, b.h);
+
+    // Outline
+    ctx.strokeStyle = 'rgba(180,130,40,0.15)';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(b.x, H - b.h, b.w, b.h);
+
+    // Windows
+    for (const w of b.windows) {
+      if (w.lit) {
+        const flicker = Math.random() > 0.998 ? !w.lit : w.lit;
+        ctx.fillStyle = flicker
+          ? `rgba(255,200,80,${0.25 + Math.random() * 0.15})`
+          : 'rgba(255,200,80,0.35)';
+        ctx.fillRect(w.x, w.y, 4, 6);
+      }
+    }
+  }
+
+  // Ground line
+  const gl = ctx.createLinearGradient(0, H - 1, W, H - 1);
+  gl.addColorStop(0, 'rgba(212,160,40,0)');
+  gl.addColorStop(0.5, 'rgba(212,160,40,0.25)');
+  gl.addColorStop(1, 'rgba(212,160,40,0)');
+  ctx.strokeStyle = gl;
+  ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.moveTo(0, H - 1); ctx.lineTo(W, H - 1); ctx.stroke();
+
+  // Floating particles
+  for (const p of particles) {
+    p.life += p.vy;
+    p.x += p.vx;
+    if (p.life <= 0 || p.x < 0 || p.x > 1) {
+      p.x = Math.random();
+      p.life = 0.5 + Math.random() * 0.5;
+      p.y = 0.85 + Math.random() * 0.15;
+    }
+    const screenY = H * (p.y - p.life * 0.4);
+    const alpha = Math.sin(p.life * Math.PI) * 0.6;
+    ctx.beginPath();
+    ctx.arc(p.x * W, screenY, 1.2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(212,170,60,${alpha})`;
+    ctx.fill();
+  }
+
+  // Vignette
+  const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.85);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.75)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, W, H);
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ======= ROTATING TIPS =======
+const tips = [
+  'Совет: читай правила перед игрой, чтобы не получить бан',
+  'Совет: уважай других игроков',
+  'Совет: на F4 открывается основное меню сервера',
+  'Совет: присоединяйся в наш Discord сервер',
+];
+const tipEl = document.querySelector('.tip');
+let tipIdx = 0;
+setInterval(() => {
+  tipIdx = (tipIdx + 1) % tips.length;
+  tipEl.style.animation = 'none';
+  tipEl.textContent = tips[tipIdx];
+  void tipEl.offsetWidth;
+  tipEl.style.animation = 'tipCycle 16s 0s infinite';
+}, 16000);
+</script>
 </body>
 </html>
