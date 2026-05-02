@@ -13,6 +13,7 @@ html, body {
   overflow: hidden;
   background: #050508;
   font-family: 'Rajdhani', sans-serif;
+  position: relative;
 }
 
 canvas {
@@ -22,13 +23,15 @@ canvas {
 }
 
 .ui {
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   pointer-events: none;
+  width: 100%;
 }
 
 /* ---- Logo ---- */
@@ -147,7 +150,7 @@ canvas {
 
 /* ---- Corner brackets ---- */
 .corner {
-  position: fixed;
+  position: absolute;
   width: 36px; height: 36px;
   border-color: rgba(212,160,40,0.18);
   border-style: solid;
@@ -162,7 +165,7 @@ canvas {
 
 /* ---- Bottom tip ---- */
 .tip {
-  position: fixed;
+  position: absolute;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
@@ -183,7 +186,7 @@ canvas {
 }
 
 .server-tag {
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   right: 28px;
   font-size: 9px;
