@@ -444,5 +444,29 @@ setInterval(() => {
   tipEl.style.animation = 'tipCycle 16s 0s infinite';
 }, 16000);
 </script>
+
+<script>
+  const tracks = [
+    'm1.ogg',
+    'm2.ogg',
+    'm3.ogg',
+  ];
+
+  let current = 0;
+  const audio = new Audio();
+  audio.volume = 0.3;
+
+  function playNext() {
+    audio.src = tracks[current];
+    audio.play().catch(() => {});
+    current = (current + 1) % tracks.length;
+  }
+
+  // Когда трек закончился — следующий
+  audio.addEventListener('ended', playNext);
+
+  // Запуск
+  playNext();
+</script>
 </body>
 </html>
